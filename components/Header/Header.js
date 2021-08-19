@@ -26,14 +26,13 @@ const Header = () => {
 				rounded={true}
 				iconOnly={true}
 				ripple="dark"
-				className="md:inline-flex h-20 w-20 border-0"
+				className=" ml-5 h-20 w-20 border-0"
 			>
 				<Icon name="apps" size="3xl" color="gray" />
 			</Button>
-
 			<img
 				loading="lazy"
-				className="cursor-pointer h-12 w-12 rounded-full ml-2"
+				className=" cursor-pointer h-12 w-12 rounded-full ml-2 mi-image"
 				src="https://lh3.googleusercontent.com/ogw/ADea4I5XXQw9-oOrrtERbv1MF2z_VLB3qDH4hVXzW6Bf=s83-c-mo"
 				alt=""
 			/>
