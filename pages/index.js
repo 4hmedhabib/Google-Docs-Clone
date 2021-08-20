@@ -1,15 +1,44 @@
+import { useState } from 'react';
 import Button from '@material-tailwind/react/Button';
 import Icon from '@material-tailwind/react/Icon';
 import Head from 'next/head';
 import { Header, Login } from '../components';
 import Image from 'next/image';
 import { getSession, useSession } from 'next-auth/client';
+import Modal from '@material-tailwind/react/Modal';
+import ModalBody from '@material-tailwind/react/ModalBody';
+import ModalFooter from '@material-tailwind/react/ModalFooter';
+import { createDocument } from 'parse5-htmlparser2-tree-adapter';
 
 export default function Home() {
 	const [ session ] = useSession();
+	const [ showModal, setShowModal ] = useState(true);
+	const [ input, setInput ] = useState('');
 
 	if (!session) return <Login />;
 
+	const modal = (
+		<Modal size="sm" active={showModal} toggler={() => setShowModal(false)}>
+			<ModalBody>
+				<input
+					type="text"
+					value={input}
+					onChange={(e) => setInput(e.target.value)}
+					className="outline-none w-full"
+					placeholder="Enter name of document..."
+					onKeyDown={(e) => e.key === 'Enter' && createDocument()}
+				/>
+			</ModalBody>
+			<ModalFooter>
+				<Button color="blue" buttonType="link" onClick={(e) => setShowModal(false)} ripple="dark">
+					Cancel
+				</Button>
+				<Button color="blue" onClick={createDocument()} ripple="light">
+					Create
+				</Button>
+			</ModalFooter>
+		</Modal>
+	);
 	return (
 		<div>
 			<Head>
@@ -17,7 +46,7 @@ export default function Home() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<Header />
+			<Header session={session} />
 
 			<section className="bg-[#f8f9fa] pb-10 px-10">
 				<div className="max-w-3xl mx-auto">
@@ -55,4 +84,13 @@ export default function Home() {
 			</section>
 		</div>
 	);
+}
+
+export async function getServerSideProps(context) {
+	const session = await getSession(context);
+	return {
+		props: {
+			session
+		}
+	};
 }
