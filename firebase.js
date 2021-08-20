@@ -8,8 +8,8 @@ const firebaseConfig = {
 	appId: '1:921928527623:web:4a3be4168b71d71f161fa2'
 };
 
-const app = !firebaseConfig.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
+const app = !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
-const db = '';
+const db = app.firestore();
 
 export { db };

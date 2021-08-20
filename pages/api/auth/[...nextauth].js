@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
-import { FirebaseAdapter } from 'next-auth/adapters';
+import { FirebaseAdapter } from '@next-auth/firebase-adapter';
 import { db } from '../../../firebase';
 
 export default NextAuth({
@@ -10,7 +10,5 @@ export default NextAuth({
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET
 		})
 	],
-	adapter: firebaseAdapter(db),
-	// Optional SQL or MongoDB database to persist users
-	database: process.env.DATABASE_URL
+	adapter: FirebaseAdapter(db)
 });
