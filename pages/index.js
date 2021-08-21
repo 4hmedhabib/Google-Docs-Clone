@@ -17,6 +17,10 @@ export default function Home() {
 
 	if (!session) return <Login />;
 
+	const showModalHandler = () => {
+		setShowModal(true);
+	};
+
 	const modal = (
 		<Modal size="sm" active={showModal} toggler={() => setShowModal(false)}>
 			<ModalBody>
@@ -30,7 +34,7 @@ export default function Home() {
 				/>
 			</ModalBody>
 			<ModalFooter>
-				<Button color="blue" buttonType="link" onClick={(e) => setShowModal(false)} ripple="dark">
+				<Button color="blue" buttonType="link" onClick={showModalHandler} ripple="dark">
 					Cancel
 				</Button>
 				<Button color="blue" onClick={createDocument()} ripple="light">
@@ -47,6 +51,8 @@ export default function Home() {
 			</Head>
 
 			<Header session={session} />
+
+			{showModal && modal}
 
 			<section className="bg-[#f8f9fa] pb-10 px-10">
 				<div className="max-w-3xl mx-auto">
@@ -65,7 +71,10 @@ export default function Home() {
 						</Button>
 					</div>
 					<div>
-						<div className="relative h-52 w-40 border-2 hover:border-blue-200 cursor-pointer">
+						<div
+							onClick={showModalHandler}
+							className="relative h-52 w-40 border-2 hover:border-blue-200 cursor-pointer"
+						>
 							<Image src="https://links.papareact.com/pju" layout="fill" />
 						</div>
 						<p className="ml-2 mt-2 text-gray-700 font-semibold text-sm">Blank</p>
