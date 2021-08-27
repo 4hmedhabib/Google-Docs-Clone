@@ -8,7 +8,6 @@ import { getSession, useSession } from 'next-auth/client';
 import Modal from '@material-tailwind/react/Modal';
 import ModalBody from '@material-tailwind/react/ModalBody';
 import ModalFooter from '@material-tailwind/react/ModalFooter';
-import { createDocument } from 'parse5-htmlparser2-tree-adapter';
 
 export default function Home() {
 	const [ session ] = useSession();
@@ -16,6 +15,8 @@ export default function Home() {
 	const [ input, setInput ] = useState('');
 
 	if (!session) return <Login />;
+
+	const createDocument = () => {};
 
 	const showModalHandler = () => {
 		setShowModal(true);
