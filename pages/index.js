@@ -2,24 +2,45 @@ import { useState } from 'react';
 import Button from '@material-tailwind/react/Button';
 import Icon from '@material-tailwind/react/Icon';
 import Head from 'next/head';
-import { Header, Login } from '../components';
+import { DocumentRow, Header, Login } from '../components';
 import Image from 'next/image';
 import { getSession, useSession } from 'next-auth/client';
 import Modal from '@material-tailwind/react/Modal';
 import ModalBody from '@material-tailwind/react/ModalBody';
 import ModalFooter from '@material-tailwind/react/ModalFooter';
+import { db } from '../firebase';
+import firebase from 'firebase';
+import { useCollectionOnce } from 'react-firebase-hooks/firestore';
 
 export default function Home() {
 	const [ session ] = useSession();
-	const [ showModal, setShowModal ] = useState(true);
+	const [ showModal, setShowModal ] = useState(false);
 	const [ input, setInput ] = useState('');
+	const [ snapShot ] = useCollectionOnce(
+		db.collection('userDocs').doc(session.user.email).collection('docs').orderBy('timestamp', 'desc')
+	);
+
+	{
+		snapShot ? console.log('Running SnapShot', snapShot.docs) : console.log('Empty!');
+	}
 
 	if (!session) return <Login />;
 
-	const createDocument = () => {};
+	const createDocument = () => {
+		if (!input) return;
+
+		db.collection('userDocs').doc(session.user.email).collection('docs').add({
+			fileName: input,
+			timeStamp: firebase.firestore.FieldValue.serverTimestamp()
+		});
+
+		setInput('');
+		setShowModal(false);
+	};
 
 	const showModalHandler = () => {
-		setShowModal(true);
+		setShowModal(!showModal);
+		setInput('');
 	};
 
 	const modal = (
@@ -31,14 +52,14 @@ export default function Home() {
 					onChange={(e) => setInput(e.target.value)}
 					className="outline-none w-full"
 					placeholder="Enter name of document..."
-					onKeyDown={(e) => e.key === 'Enter' && createDocument()}
+					onKeyDown={(e) => e.key === 'Enter' && createDocument}
 				/>
 			</ModalBody>
 			<ModalFooter>
 				<Button color="blue" buttonType="link" onClick={showModalHandler} ripple="dark">
 					Cancel
 				</Button>
-				<Button color="blue" onClick={createDocument()} ripple="light">
+				<Button color="blue" onClick={createDocument} ripple="light">
 					Create
 				</Button>
 			</ModalFooter>
@@ -91,6 +112,16 @@ export default function Home() {
 						<Icon name="folder" size="3xl" color="gray" />
 					</div>
 				</div>
+
+				{snapShot &&
+					snapShot.docs.map((doc) => {
+						<DocumentRow
+							key={doc.id}
+							id={doc.id}
+							fileName={doc.data().fileName}
+							date={doc.data().timeStamp}
+						/>;
+					})}
 			</section>
 		</div>
 	);
