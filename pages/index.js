@@ -16,13 +16,11 @@ export default function Home() {
 	const [ session ] = useSession();
 	const [ showModal, setShowModal ] = useState(false);
 	const [ input, setInput ] = useState('');
-	const [ snapShot ] = useCollectionOnce(
-		db.collection('userDocs').doc(session.user.email).collection('docs').orderBy('timestamp', 'desc')
-	);
-
-	{
-		snapShot ? console.log('Running SnapShot', snapShot.docs) : console.log('Empty!');
-	}
+	const [ snapShot ] = session
+		? useCollectionOnce(
+				db.collection('userDocs').doc(session.user.email).collection('docs').orderBy('timestamp', 'desc')
+			)
+		: [];
 
 	if (!session) return <Login />;
 
@@ -111,17 +109,18 @@ export default function Home() {
 						<p className="mr-12">Date Created</p>
 						<Icon name="folder" size="3xl" color="gray" />
 					</div>
+					{snapShot &&
+						snapShot.docs.map((doc) => {
+							return (
+								<DocumentRow
+									key={doc.id}
+									id={doc.id}
+									fileName={doc.data().fileName}
+									date={doc.data().timeStamp}
+								/>
+							);
+						})}
 				</div>
-
-				{snapShot &&
-					snapShot.docs.map((doc) => {
-						<DocumentRow
-							key={doc.id}
-							id={doc.id}
-							fileName={doc.data().fileName}
-							date={doc.data().timeStamp}
-						/>;
-					})}
 			</section>
 		</div>
 	);
